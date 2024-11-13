@@ -1,0 +1,18 @@
+TODO: 
+
+- Implement binary search tree suggestion algorithm for searchboxes
+- Style searchboxes 
+- Translate textbox selections to globe coordinates and rotate  globe 
+- Implement animation for spinning globe
+- Make a red dot show up at the airport when selected 
+- Update API to return correct data 
+- Move context data to API on backend 
+- Call API and grab route data 
+- Translate route data to lines on globe 
+- Animate lines on globe 
+- Implement metadata? 
+- Make the routes clickable to show metadata 
+- Implement "About Me" page 
+- Deploy app to nscottjobe.com
+- Make app responsive (work on mobile?)
+- Clean up code wherever possible 

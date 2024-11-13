@@ -1,0 +1,94 @@
+/* TBI: Globe and components 
+*/
+
+import { Canvas } from "@react-three/fiber";
+import "./GlobePage.css";
+import Earth from "./Earth/Earth";
+import SelectionForm from "./SelectionForm/SelectionForm";
+import parseCSV from "../../utils/CSVHelperFunctions";
+import { BinarySearchTree } from "@datastructures-js/binary-search-tree";
+import { DataContext } from "../../components/DataContext/DataContext";
+import { useEffect, useState } from "react";
+import decimalCoordinatesToSphereXAndYRotation from "../../utils/CoordinateFunctions";
+
+export default function GlobePage() {
+    const [airportData, setAirportData] = useState({});
+    const [globeCoordinates, setGlobeCoordinates] = useState(decimalCoordinatesToSphereXAndYRotation(0, 0));
+    const [globeAnimating, setGlobeAnimating] = useState(true);
+
+    async function getData() {
+        // correct this to a backend api call 
+        let airlineData = await (
+            fetch("https://raw.githubusercontent.com/benct/iata-utils/refs/heads/master/generated/iata_airlines.csv")
+            .then(r => r.text())
+            .then(r => parseCSV(r, `^`))
+        );
+
+        // correct this to a backend api call 
+        let airportData = await (
+            fetch("https://raw.githubusercontent.com/ip2location/ip2location-iata-icao/refs/heads/master/iata-icao.csv")
+            .then(r => r.text())
+            .then(r => parseCSV(r, `,`))
+        );
+
+
+        let airlineBst = new BinarySearchTree(
+            (a, b) => { 
+                return (a.name < b.name ? -1: (a.name > b.name ? 1: 0));   
+            }, {key: 'name'}
+        );
+
+        for (let i = 0; i < airlineData.length; i++) {
+            airlineBst.insert(airlineData[i]);
+        }
+
+        
+        let airportBst = new BinarySearchTree(
+            (a, b) => {
+                return (a.airport < b.airport ? -1: (a.airport > b.airport ? 1: 0));
+            }, {key: 'airport'}
+        );
+        
+        for (let i = 0; i < airportData.length; i++) {
+            airportBst.insert(airportData[i]);
+        }
+
+        setAirportData({ airportBst, airlineBst });
+    }
+
+    useEffect(() => {
+        getData();
+    }, []);
+
+    function resetGlobe() {
+        setGlobeAnimating(true);
+        setGlobeCoordinates(decimalCoordinatesToSphereXAndYRotation(0, 0));
+    }
+
+    // These functions will always use the input from the form 
+    function airportFormSubmitFunction(data) {
+        setGlobeCoordinates(decimalCoordinatesToSphereXAndYRotation(data['latitude'], data['longitude']));
+        setGlobeAnimating(false);
+    }
+
+    function airlineFormSubmitFunction(data) {
+        //console.log(data['iata_code']);
+    }
+
+    return (
+        <div className="globe-page-container">
+            <DataContext.Provider value={airportData}>
+                <div id="canvas-container">
+                    <Canvas>
+                        <ambientLight intensity={0.2}/>
+                        <directionalLight position={[1, 0, 1]} intensity={3} />
+                        <Earth coordinates={globeCoordinates} globeAnimating={globeAnimating} />
+                    </Canvas>
+                </div>
+                <SelectionForm type="airport" submitFunction={airportFormSubmitFunction} />
+                <SelectionForm type="airline" submitFunction={airlineFormSubmitFunction} />
+                <button onClick={() => resetGlobe()}>Reset Globe</button>
+            </DataContext.Provider>
+        </div>
+    )
+}

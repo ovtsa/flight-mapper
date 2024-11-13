@@ -1,0 +1,16 @@
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--dark-mid);
+    min-height: 48px;
+    padding: 0px 24px;
+    font-size: 12px;
+}
+
+.socials {
+    /*background-color: var(--light-mid);*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
