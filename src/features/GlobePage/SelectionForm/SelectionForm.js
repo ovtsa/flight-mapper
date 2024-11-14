@@ -6,7 +6,6 @@ import "./SelectionForm.css";
 
 export default function SelectionForm(props) {
     const [inputValue, setInputValue] = useState('');
-    const [selection, setSelection] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const dataContext = useContext(DataContext);
     const searchTree = useRef({});
@@ -47,7 +46,6 @@ export default function SelectionForm(props) {
         if (result === null) {
             console.error('Invalid input');
         } else {
-            setSelection(val);
             submitFunction(result.getValue());
         }
     }
@@ -61,7 +59,7 @@ export default function SelectionForm(props) {
                         <input value={inputValue} onChange={handleInputChange} />
                         <button disabled={inputValue.length === 0}>Submit</button>
                     </div>
-                    <label className="selection-label">{selection}</label>
+                    <label className="selection-label">{props.selection}</label>
                 </form>
             </div>
             <div className="suggestions-container">

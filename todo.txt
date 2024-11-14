@@ -1,6 +1,5 @@
 TODO: 
 
-- Correct selection form issue (text remains after reset button clicked)
 - Implement animation for spinning globe
 - Make a red dot show up at the airport when selected 
 - Update API to return correct data 

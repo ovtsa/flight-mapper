@@ -15,6 +15,8 @@ export default function GlobePage() {
     const [airportData, setAirportData] = useState({});
     const [globeCoordinates, setGlobeCoordinates] = useState(decimalCoordinatesToSphereXAndYRotation(0, 0));
     const [globeAnimating, setGlobeAnimating] = useState(true);
+    const [airportSelection, setAirportSelection] = useState('');
+    const [airlineSelection, setAirlineSelection] = useState('');
 
     async function getData() {
         // correct this to a backend api call 
@@ -63,16 +65,19 @@ export default function GlobePage() {
     function resetGlobe() {
         setGlobeAnimating(true);
         setGlobeCoordinates(decimalCoordinatesToSphereXAndYRotation(0, 0));
+        setAirportSelection('');
+        setAirlineSelection('');
     }
 
     // These functions will always use the input from the form 
     function airportFormSubmitFunction(data) {
         setGlobeCoordinates(decimalCoordinatesToSphereXAndYRotation(data['latitude'], data['longitude']));
         setGlobeAnimating(false);
+        setAirportSelection(data['airport']);
     }
 
     function airlineFormSubmitFunction(data) {
-        //console.log(data['iata_code']);
+        setAirlineSelection(data['name']);
     }
 
     return (
@@ -85,8 +90,8 @@ export default function GlobePage() {
                         <Earth coordinates={globeCoordinates} globeAnimating={globeAnimating} />
                     </Canvas>
                 </div>
-                <SelectionForm type="airport" submitFunction={airportFormSubmitFunction} />
-                <SelectionForm type="airline" submitFunction={airlineFormSubmitFunction} />
+                <SelectionForm type="airport" submitFunction={airportFormSubmitFunction} selection={airportSelection} />
+                <SelectionForm type="airline" submitFunction={airlineFormSubmitFunction} selection={airlineSelection} />
                 <button onClick={() => resetGlobe()}>Reset Globe</button>
             </DataContext.Provider>
         </div>
