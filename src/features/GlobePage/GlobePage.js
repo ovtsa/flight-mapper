@@ -9,7 +9,7 @@ import parseCSV from "../../utils/CSVHelperFunctions";
 import { BinarySearchTree } from "@datastructures-js/binary-search-tree";
 import { DataContext } from "../../components/DataContext/DataContext";
 import { useEffect, useState } from "react";
-import decimalCoordinatesToSphereXAndYRotation from "../../utils/CoordinateFunctions";
+import { decimalCoordinatesToSphereXAndYRotation} from "../../utils/CoordinateFunctions";
 
 export default function GlobePage() {
     const [airportData, setAirportData] = useState({});

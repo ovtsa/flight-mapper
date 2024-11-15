@@ -40,7 +40,6 @@ export default function SelectionForm(props) {
         event.preventDefault();
         setSuggestions([]);
         let result = searchTree.current.findKey(inputValue);
-        let val = inputValue;
         setInputValue('');
 
         if (result === null) {
