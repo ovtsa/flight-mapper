@@ -1,9 +1,8 @@
 TODO: 
 
-- Improve globe spinning animation algorithm
 - Make a red dot show up at the airport when selected 
-- Update API to return correct data 
 - Move context data to API on backend 
+- Update API to return correct data 
 - Call API and grab route data 
 - Translate route data to lines on globe 
 - Animate lines on globe 

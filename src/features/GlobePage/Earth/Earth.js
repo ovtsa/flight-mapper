@@ -24,32 +24,59 @@ export default function Earth(props) {
         }
     }, [props.coordinates, props.globeAnimating]);
 
-    const rotateGlobeToPosition = (radianX, radianY) => {
+    const rotateGlobeToPosition = (targetRadianX, targetRadianY, secondsOfAnimation = 1.5, framesPerSecond = 100) => {
         if (firstRender.current) {
             firstRender.current = false;
             return;
         }
 
-        // this will do for now 
-        freezePassiveAnimation.current = true;
-        let count = 0;
+        // position function: p = ((a(t^2)) / 2) + vt + s
+        // p = radial position of globe according to time elapsed
+        // a = constant acceleration (rad/second^2)
+        // t = time since animation started 
+        // v = initial velocity (rad/second)
+        // s = starting position (rad)
 
-        const t = setInterval(() => {
-            // do the panning 
-            // improve this algorithm later 
-            let radianDifferential = [radianX - mesh.current.rotation.x, radianY - mesh.current.rotation.y];
-            mesh.current.rotation.x += radianDifferential[0] * 0.025;
-            mesh.current.rotation.y += radianDifferential[1] * 0.025;
+        // What variables do we know? 
+        // p = ?
+        // a = 2(Pfinal - Pinitial) / Tfinal^2 
+        // t = currentFrame / framesPerSecond 
+        // v = 0 
+        // s = (beginningRadianX, beginningRadianY)
+        // so simplified p function: p = ((a((currentFrame / framesPerSecond)^2)) / 2) + beginningRadianXY
 
-            count++;
-            if (count >= 200) {
-                clearInterval(t);
-                mesh.current.rotation.x = radianX;
-                mesh.current.rotation.y = radianY;
-                freezePassiveAnimation.current = false;
+        const beginningRadianX = mesh.current.rotation.x;
+        const beginningRadianY = mesh.current.rotation.y;
+        const totalAnimationFrameCount = secondsOfAnimation * framesPerSecond;
+        const accelerationX = 4 * (targetRadianX - beginningRadianX) / (secondsOfAnimation ** 2);
+        const accelerationY = 4 * (targetRadianY - beginningRadianY) / (secondsOfAnimation ** 2);
+        let currentFrame = 0;
+
+        const animationInterval = setInterval(() => {
+            let accelerating = currentFrame < totalAnimationFrameCount / 2;
+
+            if (accelerating) {
+                // p = a(t^2)/2 + Vinitial(T) + Pinitial
+                mesh.current.rotation.x = ((accelerationX * ((currentFrame / framesPerSecond) ** 2)) / 2) + beginningRadianX;
+                mesh.current.rotation.y = ((accelerationY * ((currentFrame / framesPerSecond) ** 2)) / 2) + beginningRadianY;
+            } else {
+                const vInitX = accelerationX * secondsOfAnimation / 2;
+                const vInitY = accelerationY * secondsOfAnimation / 2;
+                const t = (currentFrame - (totalAnimationFrameCount / 2)) / framesPerSecond;
+
+                mesh.current.rotation.x = beginningRadianX + ((targetRadianX - beginningRadianX) / 2) + (vInitX * t) - (0.5 * (accelerationX * t ** 2));
+                mesh.current.rotation.y = beginningRadianY + ((targetRadianY - beginningRadianY) / 2) + (vInitY * t) - (0.5 * (accelerationY * t ** 2));
             }
 
-        }, 10);
+            currentFrame++;
+
+            if (currentFrame >= totalAnimationFrameCount) {
+                clearInterval(animationInterval);
+                mesh.current.rotation.x = targetRadianX;
+                mesh.current.rotation.y = targetRadianY;
+                freezePassiveAnimation.current = false;
+            }
+        }, 1000 / framesPerSecond);
     }
 
     return (
