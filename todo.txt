@@ -1,5 +1,6 @@
 TODO: 
 
+- Move page margins to be controlled by the page and not the app-level components
 - Make a red dot show up at the airport when selected 
 - Move context data to API on backend 
 - Update API to return correct data 
@@ -13,3 +14,4 @@ TODO:
 - Deploy app to nscottjobe.com
 - Make app responsive (work on mobile?)
 - Clean up code wherever possible 
+- Make panning algorithm able to cross poles / 180th meridian to find shortest route between points
