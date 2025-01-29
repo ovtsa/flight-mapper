@@ -10,16 +10,17 @@
 */
 import './global.css';
 import './App.css';
-import Footer from "../components/Footer/Footer";
-import Header from "../components/Header/Header";
-import GlobePage from '../features/GlobePage/GlobePage';
+import Footer from "./components/Footer/Footer";
+import Header from "./components/Header/Header";
+import GlobePage from './features/GlobePage/GlobePage';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import AboutPage from '../features/AboutPage/AboutPage';
+import AboutPage from './features/AboutPage/AboutPage';
 
 function App() {
   return (
     <div className='app-layout'>
       <BrowserRouter>
+        
         <Header />
         <div className='page-content'>
             <Routes>

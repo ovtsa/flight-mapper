@@ -1,7 +1,8 @@
 import { useState } from "react";
 import "./FooterIcon.css";
 
-export default function FooterIcon(props) {
+// fix any props eventually
+export default function FooterIcon(props: any) {
     const [over, setOver] = useState(false);
     return (
         <a href={props.link} target="_blank" rel="noreferrer">

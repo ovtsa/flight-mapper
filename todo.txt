@@ -1,5 +1,6 @@
 TODO: 
 
+- Perform vite migration
 - Move page margins to be controlled by the page and not the app-level components
 - Make a red dot show up at the airport when selected 
 - Move context data to API on backend 

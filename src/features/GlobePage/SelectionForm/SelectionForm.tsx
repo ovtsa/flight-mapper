@@ -1,18 +1,27 @@
-import { useContext, useRef, useState } from "react"
+import { ChangeEventHandler, FormEvent, useContext, useRef, useState } from "react"
 import capitalize from "../../../utils/StringFunctions";
 import { DataContext } from "../../../components/DataContext/DataContext";
 import autoComplete from "../../../utils/BinarySearchTreeFunctions";
 import "./SelectionForm.css";
+import { BinarySearchTree } from "@datastructures-js/binary-search-tree";
+import { CSVObjectType } from "../../../utils/CSVHelperFunctions";
 
-export default function SelectionForm(props) {
+interface SelectionFormProps {
+    type: string, 
+    selection: string, 
+    submitFunction: Function
+}
+
+export default function SelectionForm(props: SelectionFormProps) {
     const [inputValue, setInputValue] = useState('');
-    const [suggestions, setSuggestions] = useState([]);
+    const [suggestions, setSuggestions] = useState<string[]>([]);
     const dataContext = useContext(DataContext);
-    const searchTree = useRef({});
+    const searchTree = useRef(new BinarySearchTree<CSVObjectType>());
     const propertyName = useRef('');
 
-    const handleInputChange = async (event) => {
-        const value = event.target.value;
+    const handleInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+        const value = event.currentTarget.value;
+
         setInputValue(value);
 
         switch (props.type) {
@@ -28,15 +37,17 @@ export default function SelectionForm(props) {
                 break;
         }
 
-        value.length > 0 ? setSuggestions(autoComplete(searchTree.current.root(), value, propertyName.current, 5)) : setSuggestions([]);
+        value.length > 0 ? 
+            setSuggestions(autoComplete(searchTree.current.root(), value, propertyName.current, 5)) : 
+            setSuggestions([]);
     }
 
-    const handleSelection = (suggestion) => {
+    const handleSelection = (suggestion: string) => {
         setInputValue(suggestion);
         setSuggestions([]);
     }
 
-    const formSubmitted = (event, submitFunction) => {
+    const formSubmitted = (event: FormEvent<HTMLFormElement>, submitFunction: Function) => {
         event.preventDefault();
         setSuggestions([]);
         let result = searchTree.current.findKey(inputValue);

@@ -1,4 +1,4 @@
-export function decimalCoordinatesToSphereXAndYRotation(latitude, longitude) {
+export function decimalCoordinatesToSphereXAndYRotation(latitude: number, longitude: number): [number, number] {
     // Need to convert to radians from (0, 0)
     // There are 2pi radians in a full circle (360 degrees)
     // Therefore, 1 degree of longitude is 1/360 degrees, or 1/2pi radians. 
@@ -10,7 +10,7 @@ export function decimalCoordinatesToSphereXAndYRotation(latitude, longitude) {
     return [radialX, radialY];
 }
 
-export function sphereXAndYRotationToDecimalCoordinates(radialX, radialY) {
+export function sphereXAndYRotationToDecimalCoordinates(radialX: number, radialY: number) {
     // Need to convert from degrees to radians 
 
     //let latitude = radialX / (Math.PI / 180);

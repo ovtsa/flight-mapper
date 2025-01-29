@@ -1,4 +1,7 @@
-export default function autoComplete(root, prefix, propertyName, limit = 5, foundValues = []) {
+import { BinarySearchTreeNode } from "@datastructures-js/binary-search-tree/src/binarySearchTreeNode";
+import { CSVObjectType } from "./CSVHelperFunctions";
+
+export default function autoComplete(root: BinarySearchTreeNode<CSVObjectType> | null, prefix: string, propertyName: string, limit = 5, foundValues: string[] = []) {
     if (root === null || foundValues.length === limit) {
         return foundValues;
     }

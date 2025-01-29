@@ -1,7 +1,9 @@
-export default function parseCSV(csv, delimiter, removeQuotesFromHeader = true) {
+export type CSVObjectType = {[index: string]: string};
+
+export function parseCSV(csv: string, delimiter: string, removeQuotesFromHeader = true): CSVObjectType[] {
     // Todo: convert this into a creative regex 
     let lines = csv.split(/\r?\n/);
-    let result = [];
+    let result: {[index: string]: string}[] = [];
     let headers = lines[0].split(delimiter);
 
     if (removeQuotesFromHeader) {
@@ -14,7 +16,7 @@ export default function parseCSV(csv, delimiter, removeQuotesFromHeader = true) 
     }
 
     for (let i = 1; i < lines.length; i++) {
-        let obj = {};
+        let obj: {[index: string]: string} = {};
 
         if(lines[i] === undefined || lines[i].trim() === ``) {
             continue;
@@ -22,7 +24,7 @@ export default function parseCSV(csv, delimiter, removeQuotesFromHeader = true) 
 
         // check this part. Looping through characters on the line 
         let wordInFormation = '';
-        let words = [];
+        let words: string[] = [];
         let quoteIsOpen = false;
         for (let j = 0; j < lines[i].length; j++) {
             if (lines[i][j] === `"`) {

@@ -5,14 +5,14 @@ import { Canvas } from "@react-three/fiber";
 import "./GlobePage.css";
 import Earth from "./Earth/Earth";
 import SelectionForm from "./SelectionForm/SelectionForm";
-import parseCSV from "../../utils/CSVHelperFunctions";
+import { CSVObjectType, parseCSV } from "../../utils/CSVHelperFunctions";
 import { BinarySearchTree } from "@datastructures-js/binary-search-tree";
 import { DataContext } from "../../components/DataContext/DataContext";
 import { useEffect, useState } from "react";
 import { decimalCoordinatesToSphereXAndYRotation} from "../../utils/CoordinateFunctions";
 
 export default function GlobePage() {
-    const [airportData, setAirportData] = useState({});
+    const [airportData, setAirportData] = useState({ airportBst: new BinarySearchTree<CSVObjectType>(), airlineBst: new BinarySearchTree<CSVObjectType>() });
     const [globeCoordinates, setGlobeCoordinates] = useState(decimalCoordinatesToSphereXAndYRotation(0, 0));
     const [globeAnimating, setGlobeAnimating] = useState(true);
     const [airportSelection, setAirportSelection] = useState('');
@@ -20,22 +20,21 @@ export default function GlobePage() {
 
     async function getData() {
         // correct this to a backend api call 
-        let airlineData = await (
+        let airlineData: CSVObjectType[] = await (
             fetch("https://raw.githubusercontent.com/benct/iata-utils/refs/heads/master/generated/iata_airlines.csv")
             .then(r => r.text())
             .then(r => parseCSV(r, `^`))
         );
 
         // correct this to a backend api call 
-        let airportData = await (
+        let airportData: CSVObjectType[] = await (
             fetch("https://raw.githubusercontent.com/ip2location/ip2location-iata-icao/refs/heads/master/iata-icao.csv")
             .then(r => r.text())
             .then(r => parseCSV(r, `,`))
         );
 
-
-        let airlineBst = new BinarySearchTree(
-            (a, b) => { 
+        let airlineBst = new BinarySearchTree<CSVObjectType>(
+            (a: CSVObjectType, b: CSVObjectType) => { 
                 return (a.name < b.name ? -1: (a.name > b.name ? 1: 0));   
             }, {key: 'name'}
         );
@@ -45,8 +44,8 @@ export default function GlobePage() {
         }
 
         
-        let airportBst = new BinarySearchTree(
-            (a, b) => {
+        let airportBst = new BinarySearchTree<CSVObjectType>(
+            (a: CSVObjectType, b: CSVObjectType) => {
                 return (a.airport < b.airport ? -1: (a.airport > b.airport ? 1: 0));
             }, {key: 'airport'}
         );
@@ -55,7 +54,7 @@ export default function GlobePage() {
             airportBst.insert(airportData[i]);
         }
 
-        setAirportData({ airportBst, airlineBst });
+        setAirportData({airportBst, airlineBst});
     }
 
     useEffect(() => {
@@ -70,13 +69,13 @@ export default function GlobePage() {
     }
 
     // These functions will always use the input from the form 
-    function airportFormSubmitFunction(data) {
-        setGlobeCoordinates(decimalCoordinatesToSphereXAndYRotation(data['latitude'], data['longitude']));
+    function airportFormSubmitFunction(data: CSVObjectType) {
+        setGlobeCoordinates(decimalCoordinatesToSphereXAndYRotation(+data['latitude'], +data['longitude']));
         setGlobeAnimating(false);
         setAirportSelection(data['airport']);
     }
 
-    function airlineFormSubmitFunction(data) {
+    function airlineFormSubmitFunction(data: CSVObjectType) {
         setAirlineSelection(data['name']);
     }
 
